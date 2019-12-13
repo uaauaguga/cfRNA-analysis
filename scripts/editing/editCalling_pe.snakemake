@@ -1,0 +1,84 @@
+include: 'common.snakemake'
+
+
+def get_all_inputs(wildcards):
+    inputs = {}
+    inputs['RNAEditorBam'] = expand('{output_dir}/RNAEditor/{sample_id}/{sample_id}.sam',output_dir=output_dir,sample_id=sample_ids)
+    inputs['RNAEditorConfig'] = expand('{output_dir}/RNAEditor/{sample_id}/configuration.txt',output_dir=output_dir,sample_id=sample_ids)
+    inputs['editingSite'] = expand('{output_dir}/RNAEditor/{sample_id}/{sample_id}.editingSites.vcf',output_dir=output_dir,sample_id=sample_ids)
+    return list(inputs.values())
+    
+rule all:
+    input:
+        unpack(get_all_inputs)
+
+
+rule modifyBamforRNAEditor:
+    input:
+        bam='{output_dir}/bam/{sample_id}/genome.bam',
+        refGenome=genome_dir + '/RNAEditor/Homo_sapiens.GRCh38.dna.primary_assembly.fa',
+        bamHeader=genome_dir + '/RNAEditor/header.txt'
+    output:
+        sam='{output_dir}/RNAEditor/{sample_id}/{sample_id}.sam',
+        nullfastq_1='{output_dir}/RNAEditor/{sample_id}/{sample_id}_1.fastq',
+        nullfastq_2='{output_dir}/RNAEditor/{sample_id}/{sample_id}_2.fastq'
+    params:
+        outBamDir='{output_dir}/RNAEditor/{sample_id}'
+    shell:
+        '''
+        samtools view -H /BioII/zhuyumin/exLocator/test/20181029_long/SRR5714908.bam > {params.outBamDir}/temp.sam
+        samtools view {input.bam} | awk '$3 !~ /_/' |awk '$3 !~ /M/'| sed 's/chr//' >> {params.outBamDir}/temp.sam
+        cat {params.outBamDir}/temp.sam | samtools view - -Sb -o {params.outBamDir}/genome.refnameChanged.bam
+        rm {params.outBamDir}/temp.sam
+        samtools sort -n {params.outBamDir}/genome.refnameChanged.bam >  {params.outBamDir}/genome.refnameChanged.quaryNameSorted.bam
+        rm {params.outBamDir}/genome.refnameChanged.bam
+        java -Xmx4G -jar /Share2/home/lulab/zhuyumin/apps0/RNAEditor_Reqiurements/picard-tools/AddOrReplaceReadGroups.jar \
+        INPUT={params.outBamDir}/genome.refnameChanged.quaryNameSorted.bam \
+        OUTPUT= {params.outBamDir}/genome.coordSorted.bam \
+        SO=coordinate \
+        VALIDATION_STRINGENCY=LENIENT \
+        CREATE_INDEX=true \
+        ID=A LB=A SM=A PL=illumina PU=HiSeq2000
+        rm {params.outBamDir}/genome.refnameChanged.quaryNameSorted.bam
+        java1.8 -jar /Share2/home/lulab/zhuyumin/apps0/RNAEditor_Reqiurements/GATK/GenomeAnalysisTK.jar -T PrintReads --filter_reads_with_N_cigar \
+        -R {input.refGenome} \
+        -I {params.outBamDir}/genome.coordSorted.bam \
+        -o {params.outBamDir}/genome.filtered.bam \
+        -rf ReassignOneMappingQuality  \
+        -RMQF 255   \
+        -RMQT 60
+        rm {params.outBamDir}/genome.coordSorted.bam
+        mv {params.outBamDir}/genome.filtered.bam {output.sam}
+        touch {output.nullfastq_1}
+        touch {output.nullfastq_2}
+        '''
+
+
+rule prepareRNAEditorConfig:
+    input:
+        template=root_dir + '/templates/configuration.txt'
+    output:
+        config='{output_dir}/RNAEditor/{sample_id}/configuration.txt'
+    params:
+        output_preffix='{output_dir}/RNAEditor/{sample_id}/{sample_id}'
+    run:
+        configPath=output.config
+        template=input.template
+        output_preffix=params.output_preffix
+        templateString=open(template).read().format(output_preffix)
+        with open(configPath,"w") as f:
+            f.write(templateString)
+
+rule RNAEditor:
+    input:
+        config='{output_dir}/RNAEditor/{sample_id}/configuration.txt',
+        sam='{output_dir}/RNAEditor/{sample_id}/{sample_id}.sam',
+        fastq_1='{output_dir}/RNAEditor/{sample_id}/{sample_id}_1.fastq',
+        fastq_2='{output_dir}/RNAEditor/{sample_id}/{sample_id}_2.fastq'
+    output:
+        vcf='{output_dir}/RNAEditor/{sample_id}/{sample_id}.editingSites.vcf'
+    shell:
+        """
+        #python /BioII/zhuyumin/exLocator/software/RNAEditor_bam_filter/RNAEditor.py -i  {input.fastq_1} {input.fastq_2} -c {input.config}
+        python /BioII/lulab_b/jinyunfan/software/RNAEditor/RNAEditor.py -i  {input.fastq_1} {input.fastq_2} -c {input.config}
+        """
