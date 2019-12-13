@@ -6,10 +6,12 @@ import argparse
 
 parser = argparse.ArgumentParser(description='Summarize SNP Results')
 parser.add_argument('--indir', '-i', type=str, required=True, help='input dir')
-parser.add_argument('--muttable','-m',type=str,required=True,help='output mutation table path')
-parser.add_argument('--freqtable','-f',type=str,required=True,help='output frequency table path')
-parser.add_argument('--odds_ratio','-or',type=str,required=True,help='output odds ratio path')
+parser.add_argument('--muttable','-m',type=str,default=None,help='output mutation table path')
+parser.add_argument('--freqtable','-f',type=str,default=None,help='output frequency table path')
+parser.add_argument('--odds_ratio','-or',type=str,default=None,help='output odds ratio path')
 parser.add_argument('--covariates','-cov',type=str,required=True,help="covariates table")
+parser.add_argument('--venn','-v',type=str,default=None,help='bool matrix for detected SNP')
+parser.add_argument('--mincount','-mc',type=int,help="Minumum frequency for a SNP to be considered as exist in a group",default=1)
 args = parser.parse_args()
 
 
@@ -57,11 +59,13 @@ for file in tqdm(os.listdir(args.indir)):
             mutationRecords.append((sample_id,temp))
             watchDog.add(temp)
 print("Done .")
-print("Write to "+args.muttable+"...")
-df = pd.DataFrame.from_records(mutationRecords)
-df.columns = ["sample_id","mutation"]
-df.to_csv(args.muttable,sep="\t",index=False)
-print("Done .")
+
+if args.muttable is not None:
+    print("Write to "+args.muttable+"...")
+    df = pd.DataFrame.from_records(mutationRecords)
+    df.columns = ["sample_id","mutation"]
+    df.to_csv(args.muttable,sep="\t",index=False)
+    print("Done .")
 
 
 #Group by disease
@@ -86,26 +90,35 @@ for state in tqdm(states):
     countsDf = countsDf.set_index(0)
     countsDf.index.name = "mutation"
     countsDf.columns = ["counts"]
+    countsDf = countsDf[countsDf["counts"]>args.mincount].copy()
     for mutation,frequency in countsDf.to_records():
         records.append((mutation,frequency,state,n))
 
 frequencyTable = pd.DataFrame.from_records(records)
 frequencyTable.columns = ["mutation","frequency","state","number"]
 print("Done .")
-print("Write to "+args.freqtable+"...")
-frequencyTable["ratio"] = frequencyTable["frequency"]/frequencyTable["number"] 
-frequencyTable.to_csv(args.freqtable,sep="\t",index=False)
-print("Done .")
+
+if args.freqtable is not None:
+    print("Write to "+args.freqtable+"...")
+    frequencyTable["ratio"] = frequencyTable["frequency"]/frequencyTable["number"]
+    frequencyTable.to_csv(args.freqtable,sep="\t",index=False)
+    print("Done .")
 
 
-print("Calculate odds ratio ...")
-temp = frequencyTable.groupby("mutation").apply(stat)
-print("Done .")
-cancers = ["CRC","HCC","STAD","LUAD","ESCA"]
-odds = pd.DataFrame(index=temp.index,columns=cancers)
+if args.venn is not None:
+    frequencyTable["detected"] = 1
+    venn = frequencyTable.pivot(index="mutation",columns="state",values="detected").fillna(0).astype(int)
+    venn.to_csv(args.venn,sep="\t")
 
-for cancer in cancers:
-    print(cancer)
-    odds.loc[odds.index,cancer] = (temp[cancer]/temp["Health"])
-
-odds.to_csv(args.odds_ratio,sep="\t")
+if args.odds_ratio is not None:
+    print("Calculate odds ratio ...")
+    temp = frequencyTable.groupby("mutation").apply(stat)
+    print("Done .")
+    cancers = ["CRC","HCC","STAD","LUAD","ESCA"]
+    odds = pd.DataFrame(index=temp.index,columns=cancers)
+    
+    for cancer in cancers:
+        print(cancer)
+        odds.loc[odds.index,cancer] = (temp[cancer]/temp["Health"])
+    
+    odds.to_csv(args.odds_ratio,sep="\t")
