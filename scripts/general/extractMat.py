@@ -20,15 +20,14 @@ if args.sample_ids is not None:
     sample_ids = list(sample_ids)
     print("Number of selected samples:",len(sample_ids))
     sample_ids = sorted(sample_ids)
+else:
+    sample_ids = list(df.columns)
 if args.genes is not None:
     gene_ids = open(args.genes).read().strip().split("\n")
     gene_ids = set(gene_ids).intersection(set(df.index))
     print("Number of selected genes:",len(gene_ids))
-if args.genes is not None and args.sample_ids is None:
-    mat = df.loc[:,sample_ids]
-if args.genes is None and args.sample_ids is not None:
-    mat = df.loc[gene_ids,:]
-if args.genes is not None and args.sample_ids is not None:
-    mat = df.loc[gene_ids,sample_ids]
+else:
+    gene_ids = list(df.index)
 
+mat = df.loc[gene_ids,sample_ids]
 mat.to_csv(args.output,sep="\t")

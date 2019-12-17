@@ -11,6 +11,7 @@ parser.add_argument('--stratify','-st',default=None,help="input table for filter
 parser.add_argument('--stratify_key','-sk',help="stratifiy according to which column in input table")
 parser.add_argument('--collapse','-c',choices=["union","intersection"],default="union",help="How to collapse stratified filtered results")
 parser.add_argument('--output','-o',type=str,required=True,help='output path')
+parser.add_argument('--pass_gene_ids','-ps',type=str,help="where to store gene ids pass filtrations",default=None)
 args = parser.parse_args()
 
 if args.method == "by_value":
@@ -70,3 +71,6 @@ print("Features pass the filtration: {}".format(df_filtered.shape[0]))
 print(df_filtered.head())
 df_filtered.to_csv(args.output,sep="\t")
 
+if args.pass_gene_ids is not None:
+    with open(args.pass_gene_ids,"w") as f:
+        f.write("\n".join(df_filtered.index)+"\n")
