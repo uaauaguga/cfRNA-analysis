@@ -5,7 +5,7 @@
 
 ## Quality Control and Transcriptome Quantification
 
-  We used STAR aligner to map cleaned reads to hg38 genome index build with gencodev27 splice junction annotation. The unmapped reads were mapped to upstream and downstream 300 nt sequence around trans-splice junction extracted from circBase. Duplications in genome and circular RNA mapped reads were removed with picard tools MarkDuplicates. To estimate the distribution of genome mapped reads along different genomic regions, reads were assigned one of several classes with bedtools follow the priority: lncRNA, mRNA, tucpRNA, srpRNA, snRNA, snoRNA, Y_RNA, other exon regions, intron, antisense, promoter, enhancer, and repeats. Here we use mitranscriptome annotation to define the genomic regions correspond to lncRNA and tucpRNA; regions of mRNA, srpRNA, snRNA, snoRNA and Y_RNA were specified refer to gencodev27 annotation in a similar way. Antisense is defined as the reverse strand of exons regions. Repeat regions were download from UCSC GenomeBrowser. Promoter and enhancer regions were retrived from Broad ChromHMM annotations. 
+  We used STAR aligner to map cleaned reads to hg38 genome index build with gencodev27 splice junction annotation. The unmapped reads were mapped to upstream and downstream 300 nt sequence around trans-splice junction extracted from circBase. Duplications in genome and circular RNA mapped reads were removed with picard tools MarkDuplicates. To estimate the distribution of genome mapped reads along different genomic regions, reads were assigned one of several classes with bedtools follow the priority: lncRNA, mRNA, tucpRNA, srpRNA, snRNA, snoRNA, YRNA, other exon regions, intron, antisense, promoter, enhancer, and repeats. Here we use mitranscriptome annotation to define the genomic regions correspond to lncRNA and tucpRNA; regions of mRNA, srpRNA, snRNA, snoRNA and YRNA were specified refer to gencodev27 annotation in a similar way. Antisense is defined as the reverse strand of exons regions. Repeat regions were download from UCSC GenomeBrowser. Promoter and enhancer regions were retrived from Broad ChromHMM annotations. 
   Genome mapped reads were assiged to genomics features with featureCounts, using mRNA,YRNA,snoRNA,snRNA srpRNA annotation in genecode v27, and lncRNA annotation in mitranscriptome (tucpRNA is excluded from further analysis because of its un-well characterized nature). Genes with TPM higher than 2 were considered as detectable. The trans-spliced juntion mapped reads were quantified with a customized python script. Differential expression between each cancer types and healthy donors was performed using glmlrt method in edgeR package.
 
 ## Post-transcriptional modification analysis
@@ -17,6 +17,9 @@
 ## Other RNA variation analysis
   Chimeric RNAs were detected by STAR-fusion with default parameters.
   Potential SNPs were called using GATK4 HaplotypeCaller. To retrive relatively informative SNPs, only the intersection between detected SNPs and COSMIC database were kept. Variants likely to be attribute to RNA editing (A to G, G to A, C to T or T to C conversion ) were filtered. Chimeric RNAs and SNVs that were only detected in one samples were thought to be noise, and excluded further analysis.
+
+
+## Classification of unmapped reads
 
 ## Discovery-Validation Splitting
   Samples from healthy donors and patients with different cancer types were stratified according to sample sources (from which hospital), genders, ages and cancer subtypes, then split into two dataset in 1:1 manner.
