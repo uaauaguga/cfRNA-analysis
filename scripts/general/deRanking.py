@@ -6,12 +6,11 @@ parser = argparse.ArgumentParser(description="Ranking DE Table")
 parser.add_argument("--input","-i",help="Input matrix")
 parser.add_argument("--output","-o",help="path for output")
 parser.add_argument("--metric","-m",default="pi",choices=["pi","log2fc"],help="gene ranking metric")
+parser.add_argument("--topngene","-n",default=20,help="How many genes to select from the detable")
 args = parser.parse_args()
 
 def loadData(path):
     df = pd.read_csv(path,sep="\t",index_col=0)
-    df.index = df.index.map(lambda x:x.split("|")[0].split(".")[0])
-    df = df[~df.index.duplicated()]
     df["pi"] = df["log2FoldChange"]*(-np.log10(df["pvalue"]))
     return df
 
