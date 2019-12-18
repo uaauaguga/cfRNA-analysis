@@ -47,5 +47,5 @@ ax.set_yticks(np.arange(10))
                                             
 ax.set_xlabel("{}-percentiles".format(args.label1))
 ax.set_ylabel("{}-percentiles".format(args.label2))
-ax.set_title("{}:{}".format(args.label1,args.label2))
+#ax.set_title("{}:{}".format(args.label1,args.label2))
 plt.savefig(args.output)
