@@ -12,6 +12,7 @@ parser.add_argument('--stratify_key','-sk',help="stratifiy according to which co
 parser.add_argument('--collapse','-c',choices=["union","intersection"],default="union",help="How to collapse stratified filtered results")
 parser.add_argument('--output','-o',type=str,required=True,help='output path')
 parser.add_argument('--pass_gene_ids','-ps',type=str,help="where to store gene ids pass filtrations",default=None)
+parser.add_argument('--fill_na','-fn',default=None)
 args = parser.parse_args()
 
 if args.method == "by_value":
@@ -68,7 +69,10 @@ else:
         
 print("Features pass the filtration: {}".format(df_filtered.shape[0]))
 
-print(df_filtered.head())
+if args.fill_na is not None and args.method=="by_na":
+    print("Fill NaN with zeros .")
+    df_filtered = df_filtered.fillna(0)
+
 df_filtered.to_csv(args.output,sep="\t")
 
 if args.pass_gene_ids is not None:

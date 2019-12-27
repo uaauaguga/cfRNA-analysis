@@ -13,7 +13,8 @@ parser.add_argument('-m','--method',help='Which method used for summarize detabl
 parser.add_argument('-n','--topNgene',help='How many genes to select',default=20)
 parser.add_argument('-dk','--diff_key',help='Which columns in the de table measures difference',default="log2FoldChange")
 parser.add_argument('-qk','--padj_key',help='Which columns in the de table measures padj',default="padj")
-parser.add_argument('-t','--trend',help='Whether include trend information',choices=["up","down","both","merge"],default="both")
+parser.add_argument('-t','--trend',help='Whether include trend information',choices=["up","down","both","merged"],default="both")
+parser.add_argument('--stat',help='where to output summarize statistics',default=None)
 args = parser.parse_args()
 
 indir = args.input_dir
@@ -50,6 +51,7 @@ def extractTrends(diffTable):
     global diffCol
     up = (diffTable[diffCol]>0).astype(int)
     down = (diffTable[diffCol]<0).astype(int)
+    print("{} up, {} down".format(up.sum(),down.sum()))
     df = pd.DataFrame({"IDs":diffTable.index,"up":up,"down":down})
     df = df.set_index("IDs")
     return df
@@ -79,7 +81,7 @@ def summarize(diffTableDir,usedTrend=args.trend):
     sumTable = pd.DataFrame(index=all_genes,columns=columns)
     for comparison in comparisons:
         if usedTrend == "merged":
-            sumTable.loc[sumDict[comparison].index,comparison] = int((sumDict[comparison]["up"]+sumDict[comparison]["down"])>1)
+            sumTable.loc[sumDict[comparison].index,comparison] = ((sumDict[comparison]["up"]+sumDict[comparison]["down"])>0).astype(int)
         else:
             sumTable.loc[sumDict[comparison].index,comparison+"-up"] = sumDict[comparison]["up"]
             sumTable.loc[sumDict[comparison].index,comparison+"-down"] = sumDict[comparison]["down"]
@@ -93,3 +95,5 @@ def summarize(diffTableDir,usedTrend=args.trend):
 
 result = summarize(indir,args.trend)
 result.to_csv(outmat,sep="\t")
+if args.stat is not None:
+    result.sum(axis=0).to_csv(args.stat,sep="\t")
