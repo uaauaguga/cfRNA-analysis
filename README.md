@@ -12,7 +12,7 @@
 
 ## Post-transcriptional Modification Analysis
 
- Percentage spliced in (psi) value estimated by rMATs software was utilized as a surrogate for the relative abundance of different isoforms. Differential alternative splicing events were determined by rMAT's build-in statistical testing methods with cut off FDR<0.05, Δpsi > 0.05. 
+ Percentage spliced in (psi) value estimated by rMATs software was utilized as a surrogate for the relative abundance of different isoforms. Differential alternative splicing events were determined by rMATs' build-in statistical testing methods with cut off FDR<0.05, Δpsi > 0.05. 
  Differential alternative polyadenylation analysis was performed using DaPar scripts with default parameter. APA events with adjusted p value lower than 0.05 were considered as different between two groups.
  RNA editing events were determined use RNAEditor software. Editing sites detected in more than 10% of the samples were retained. In each sample, editing sites with coverage higher than 3 were thought to be informative. We performed rank-sum test (ranksums in scipy package) for editing levels of editing sites with at least 3 informative samples in both classes. The resulting p value were adjusted by Benjamini-Hochberg FDR correction (multipletests function in statsmodels package). 
 
