@@ -39,9 +39,9 @@ commonFusion = np.intersect1d(fusion1,fusion2)
 uniq1 = np.setdiff1d(fusion1,fusion2)
 uniq2 = np.setdiff1d(fusion2,fusion1)
 
-print("{} samples are unique in first group".format(len(uniq1)))
-print("{} samples are commonly detected".format(len(commonFusion)))
-print("{} samples are unique in second group".format(len(uniq2)))
+print("{} fusions are unique in first group".format(len(uniq1)))
+print("{} fusions are commonly detected".format(len(commonFusion)))
+print("{} fusions are unique in second group".format(len(uniq2)))
 
 allFusions = set(fusion1).union(fusion2)
 
