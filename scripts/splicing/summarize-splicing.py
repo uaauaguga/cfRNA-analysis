@@ -30,7 +30,7 @@ A3SS = idInCommon+['longExonStart_0base','longExonEnd', 'shortES', 'shortEE', 'f
 A5SS = A3SS
 columns_dict={"MXE":MXE,"SE":SE,"RI":RI,"A3SS":A3SS,"A5SS":A5SS}
 id_columns = columns_dict[splicing_type]
-sample_ids = neg_ids + pos_ids
+sample_ids = pos_ids + neg_ids
 junction_ids = splicing_type + "|" + df.loc[:,id_columns].apply(lambda x:"|".join([str(each) for each in x]),axis=1).values
  
 inc_1 = se2mat(df.loc[:,'IJC_SAMPLE_1'])
