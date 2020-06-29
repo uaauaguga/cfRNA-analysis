@@ -86,8 +86,9 @@ records = []
 for state in tqdm(states):
     subDf = df[df["state"]==state]
     n = subDf["sample_id"].unique().shape[0]
-    countsDf = pd.DataFrame(np.unique(subDf["mutation"],return_counts=True)).T
-    countsDf = countsDf.set_index(0)
+    mutIDs,numbers = np.unique(subDf["mutation"].values,return_counts=True)
+    countsDf = pd.Series(index=mutIDs,data=numbers).to_frame()
+    #countsDf = countsDf.set_index(0)
     countsDf.index.name = "mutation"
     countsDf.columns = ["counts"]
     countsDf = countsDf[countsDf["counts"]>args.mincount].copy()

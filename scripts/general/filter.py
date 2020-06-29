@@ -4,7 +4,7 @@ import sys
 
 parser = argparse.ArgumentParser(description='Filter Matrix by Expression or NaN values')
 parser.add_argument('--input', '-i', type=str, required=True, help='input matrix')
-parser.add_argument('--method','-m',type=str,default="by_na",choices=["by_na","by_value"])
+parser.add_argument('--method','-m',type=str,default="by_value",choices=["by_na","by_value"])
 parser.add_argument('--threshold','-s',type=float,help="threshold for a gene to be condidered as expressed",default=None)
 parser.add_argument('--proportion','-p',type=float,default=0.2,help="More than p of the samples should satistify this condition")
 parser.add_argument('--stratify','-st',default=None,help="input table for filter stratification")

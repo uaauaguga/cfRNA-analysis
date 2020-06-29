@@ -22,26 +22,26 @@ freq2 = pd.read_csv(args.freq2,sep="\t",index_col=0)
 
 n1 = freq1.iloc[0,:].sum()
 n2 = freq2.iloc[0,:].sum()
-
-print("{} fusions are in the first freq table".format(freq1.shape[0]))
-print("{} fusions are in the second freq table".format(freq2.shape[0]))
+print("Before filter:")
+print("{} variants are in the first freq table".format(freq1.shape[0]))
+print("{} variants are in the second freq table".format(freq2.shape[0]))
 
 freq1 = freq1[freq1["n_detected"]>args.mincounts]
 freq2 = freq2[freq2["n_detected"]>args.mincounts]
 
 fusion1 = freq1.index
 fusion2 = freq2.index
-
-print("{} fusions are in the first freq table".format(freq1.shape[0]))
-print("{} fusions are in the second freq table".format(freq2.shape[0]))
+print("After filter:")
+print("{} variants are in the first freq table".format(freq1.shape[0]))
+print("{} variants are in the second freq table".format(freq2.shape[0]))
 
 commonFusion = np.intersect1d(fusion1,fusion2)
 uniq1 = np.setdiff1d(fusion1,fusion2)
 uniq2 = np.setdiff1d(fusion2,fusion1)
 
-print("{} fusions are unique in first group".format(len(uniq1)))
-print("{} fusions are commonly detected".format(len(commonFusion)))
-print("{} fusions are unique in second group".format(len(uniq2)))
+print("{} variants are unique in first group".format(len(uniq1)))
+print("{} variants are commonly detected".format(len(commonFusion)))
+print("{} variants are unique in second group".format(len(uniq2)))
 
 allFusions = set(fusion1).union(fusion2)
 

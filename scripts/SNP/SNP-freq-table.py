@@ -40,8 +40,9 @@ df = pd.DataFrame.from_records(mutationRecords)
 df.columns = ["sample_id","mutation"]
 
 n = df["sample_id"].unique().shape[0]
-freq_table = pd.DataFrame(np.unique(df["mutation"],return_counts=True)).T
-freq_table = freq_table.set_index(0)
+snpID,number = np.unique(df["mutation"],return_counts=True)
+freq_table = pd.DataFrame(index=snpID,data=number)
+#freq_table = freq_table.set_index(0)
 freq_table.index.name = "mutation"
 freq_table.columns = ["n_detected"]
 freq_table["n_undetected"] = n_samples - freq_table["n_detected"]

@@ -2,10 +2,10 @@ import pandas as pd
 import numpy as np
 import argparse
 from itertools import product
+import os
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-i','--input_dir',help='Dirs contain differential expression result',required=True)
-parser.add_argument('-c','--comparisons',help="Files for comparisons between classes, comparison should be named as the file name of each de table, trimmed off .txt",required=True)
 parser.add_argument('-o','--bool_mat',help='Bool value coded matrix, indicating whether up/down for certain comparison',required=True)
 parser.add_argument('-d','--diff',help='Absolute value of log2foldchange cut off for DE, abs(delta(psi)) for AS, abs(delta(ratio)) for editing ratio, etc',default=1.0,type=float)
 parser.add_argument('-q','--padj',help='Threshold for adjusted p value',default=0.05,type=float)
@@ -18,12 +18,10 @@ parser.add_argument('--stat',help='where to output summarize statistics',default
 args = parser.parse_args()
 
 indir = args.input_dir
-comparisonsPath = args.comparisons
 outmat = args.bool_mat
 diff = args.diff
 padj = args.padj
 #PValue FDR IncLevelDifference
-comparisons = open(comparisonsPath).read().strip().split("\n")
 
 
 diffCol= args.diff_key
@@ -57,9 +55,9 @@ def extractTrends(diffTable):
     return df
 
 def summarize(diffTableDir,usedTrend=args.trend):
+    comparisons = [x.split(".")[0] for x in os.listdir(diffTableDir) ]
     diffTablePath = diffTableDir + "/{}.txt"
     all_genes = set()
-    global comparisons
     global diff
     global padj
     sumDict = {}

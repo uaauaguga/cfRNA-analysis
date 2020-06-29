@@ -23,9 +23,9 @@ message('read count matrix: ', args$matrix)
 mat <- read.table(args$matrix, header = TRUE, row.names=1, check.names=FALSE, sep='\t')
 
 message('Read positive sample ids')
-positive_samples <- read.delim(args$positive_ids,sep="\n",stringsAsFactors=F)[,1]
+positive_samples <- read.delim(args$positive_ids,sep="\n",stringsAsFactors=F,header=F)[,1]
 message('Read negative sample ids')
-negative_samples <- read.delim(args$negative_ids,sep="\n",stringsAsFactors=F)[,1]
+negative_samples <- read.delim(args$negative_ids,sep="\n",stringsAsFactors=F,header=F)[,1]
 message('Number of positive samples: ', length(positive_samples))
 message('Number of negative samples: ', length(negative_samples))
 
