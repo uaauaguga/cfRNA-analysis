@@ -1,5 +1,6 @@
+# Small RNA-seq Data Analysis
 ## 1. Trim adaptor
-```{bash}
+```bash
 ## For NEB libraries:
 cutadapt AGATCGGAAGAGCACACGTCTGAACTCCAGTCAC -m 16 --trim-n -q 30 \
 -o >(pigz -c -p {threads} > {trimmed}) {input} > {log} 2>&1
@@ -12,7 +13,7 @@ cutadapt AAAAAAAAAAA GGGGG -m 16 --trim-n -q 30 \
 ## 2. Sequence alignment
 - Priority of sequential alignment
 - spikein, univec, rRNA, lncRNA, miRNA, mRNA, piRNA, snoRNA, snRNA, srpRNA, tRNA, tucpRNA, Y RNA, circRNA, genome
-```{bash}
+```bash
 ## Sequential alignment, see snakefiles/sequential_mapping.snakemake 
 pigz -d -c {inputFastq} \
         | bowtie2 -f -p 1 --norc --sensitive --no-unal \
@@ -22,7 +23,7 @@ pigz -d -c {inputFastq} \
 
 
 ## 3. Quantification
-```{bash}
+```bash
 
 ## Count reads aligned to miRNA
 bin/count_reads.py count_mature_mirna -i {miRNABam} -a {annotation}  -o {output}
