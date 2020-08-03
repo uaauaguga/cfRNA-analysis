@@ -128,9 +128,9 @@ python bin/summarize-kraken.py -i {report} -l {taxoLevel} -o {output}
 
 ```
 
-## 5.1 Filtering: bin/filter.py
+## 5.1 Filtering: *bin/filter.py*
 
 ## 5.2 Differential analysis:
-- For counts data ( expression counts and kraken2 counts ), see default method (edger-glmlrt) in bin/differential_expression.R
-- For analysis of ratio based data (psi, PDUI and editing level), see bin/ranksum.py
+- For counts data ( expression counts and kraken2 counts ), see default method (edger-glmlrt) in *bin/differential_expression.R*
+- For analysis of ratio based data (psi, PDUI and editing level), see *bin/ranksum.py*
 
