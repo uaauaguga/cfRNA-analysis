@@ -1,4 +1,4 @@
-## 1 Trim adaptor
+## 1. Trim adaptor
 ```{bash}
 ## For NEB libraries:
 cutadapt AGATCGGAAGAGCACACGTCTGAACTCCAGTCAC -m 16 --trim-n -q 30 \
@@ -9,7 +9,7 @@ cutadapt AAAAAAAAAAA GGGGG -m 16 --trim-n -q 30 \
 -o >(pigz -c -p {threads} > {trimmed}) {input} > {log} 2>&1
 
 ```
-## 2 Mapping
+## 2. Sequence alignment
 - Priority of sequential alignment
 - spikein, univec, rRNA, lncRNA, miRNA, mRNA, piRNA, snoRNA, snRNA, srpRNA, tRNA, tucpRNA, Y RNA, circRNA, genome
 ```{bash}
@@ -21,7 +21,7 @@ pigz -d -c {inputFastq} \
 ```
 
 
-## 3 Quantification
+## 3. Quantification
 ```{bash}
 
 ## Count reads aligned to miRNA
