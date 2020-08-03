@@ -1,5 +1,5 @@
 ## 1. Trim adaptor
-```{bash}
+```bash
 ## For NEB libraries:
 cutadapt AGATCGGAAGAGCACACGTCTGAACTCCAGTCAC -m 16 --trim-n -q 30 \
 -o >(pigz -c -p {threads} > {trimmed}) {input} > {log} 2>&1
