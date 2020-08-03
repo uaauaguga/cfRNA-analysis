@@ -10,8 +10,9 @@ Rscript bin/normalization.R --counts ${input} --classes metadata/sample_classes.
 ```
 
 ## Evaluation of feature selection methods and classifiers
-- Evaluate the stability of feature selection
+- Evaluate the stability of feature selection using KI index
 ```bash
+## Method: ranksum RF SURF LR-L1  MI random ranksum-SURF
 python bin/FS.py --input ${input} --pos metadata/CRC-dis.txt  --neg metadata/NC-dis.txt --resampling 100 --recurrency 1 --method ${method} --features stability/${method}.txt
 ```
 - Evaluate the performance of feature selection
@@ -22,16 +23,16 @@ python bin/test-classification.py  --input ${input} --pos CRC --neg NC --selecto
 ```
 
 ## Binary feature selection and classification
-```
+```bash
 # Cancer vs. HD classification
-# see *bin/run-variation-cancer-NC.sh* and *bin/run-expression-cancer-NC.sh*
+# see bin/run-variation-cancer-NC.sh and bin/run-expression-cancer-NC.sh
  
 # One vs. rest classification for different cancers
 # see bin/run-OvR5.sh
 
 # Combine selected features by mixing features and logistic regression
-# see *bin/get-probability.sh* and *bin/probability-integration.py*
+# see bin/get-probability.sh* and *bin/probability-integration.py
 ```
 
 ## Multiclass classification
-- See *bin/multi-class.py*
+- See bin/multi-class.py
