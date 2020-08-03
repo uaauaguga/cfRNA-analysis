@@ -50,6 +50,7 @@ bash bin/getIntron-spanning.sh {inbam} {outbam} > {log} 2>&1
 - The priority of the assignment is defined in config/priority.txt
 - bed files corresponding to regions in config/priority.txt should be present in {beddir}, named as {regionsName}.bed
 ```bash
+# For forward stranded library, '-S' bedtools coverage -counts -S -sorted -a - -b ${beddir}/${region}.bed should be replaced by '-s'
 bash bin/sequential.assign.long.sh {bam} {outdir} {beddir}
 ```
 
