@@ -7,8 +7,8 @@ cutadapt --pair-filter any  -q 30,30 \
             {input.fastq1} {input.fastq2} > {log} 2>&1
 ```
 ## 1.2 Trim GC oligo introduced in template switching
-- For reverse stranded (first strand), strandness set to reverse, for forward strand (second strand), strandness set too forward
-- Read pairs short than 30nt are discarded
+- For reverse stranded (first strand), set strandness to reverse, for forward strand (second strand), set strandness to forward
+- Read pairs shorter than 30 nt are discarded
 - Input should be compressed by gzip, named as '{sample_id}_{1,2}.fastq.gz'
 ```bash
 python bin/trimGC.py -s {strandness} -o {output_preffix} -i {input_preffix} > {log} 2>&1
@@ -16,7 +16,8 @@ python bin/trimGC.py -s {strandness} -o {output_preffix} -i {input_preffix} > {l
 
 ## 2.1 Reads alignment
 - Sequentially align reads to spikeIn,UniVec,rRNA,hg38,and circRNA using the following command
-- For spikeIn,UniVec,rRNA,and circRNA alignment, seedPerWindowNmax=20, for hg38 alignment, seedPerWindowNmax=50
+  - For spikeIn,UniVec,rRNA,and circRNA alignment, set seedPerWindowNmax=20
+  - For hg38 alignment, set seedPerWindowNmax=50
 ```bash
 STAR --genomeDir {sequenceIndex} \
             --readFilesIn {input.reads1} {input.reads2} \
@@ -29,7 +30,7 @@ STAR --genomeDir {sequenceIndex} \
             --seedPerWindowNmax {seedPerWindowNmax}
 ```
 
-## 2.2 Remove duplication for circRNA.bam and genome.bam
+## 2.2 Remove duplication for circRNA.bam and genome.bam with picard tools
 ```bash
 java -jar {picardDir}/picard.jar \
             MarkDuplicates REMOVE_DUPLICATES=true \
@@ -40,15 +41,15 @@ java -jar {picardDir}/picard.jar \
             READ_NAME_REGEX=null
 ```
 
-## 2.3 Get intron spanning reads for genome aligned reads
-- If any read in a read pair contains N in its CIGAR string, this fragment was considered as intron-spanning
+## 2.3 Get intron spanning reads from genome aligned reads
+- If any mate in a read pair contains N in its CIGAR string, this fragment was considered as intron-spanning
 ```bash
 bash bin/getIntron-spanning.sh {inbam} {outbam} > {log} 2>&1
 ```
 
-## 3.1 Assign reads in genome bam file to different genomic regions
+## 3.1 Assign reads in genome bam file to certain genomic regions
 - The priority of the assignment is defined in config/priority.txt
-- bed files corresponding to regions in config/priority.txt should be present in {beddir}, named as {regionsName}.bed
+- bed files corresponding to regions in config/priority.txt should be present in {beddir}, named as {regionsName}.bed, in bed6 format
 ```bash
 # For forward stranded library, '-S' in bedtools coverage -counts -S -sorted -a - -b ${beddir}/${region}.bed should be replaced by '-s'
 bash bin/sequential.assign.long.sh {bam} {outdir} {beddir}
@@ -133,6 +134,6 @@ python bin/summarize-kraken.py -i {report} -l {taxoLevel} -o {output}
 - See bin/filter.py
 
 ## 5.2 Differential analysis:
-- For counts data ( expression counts and kraken2 counts ), see default method (edger-glmlrt) in *bin/differential_expression.R*
-- For analysis of ratio based data (psi, PDUI and editing level), see *bin/ranksum.py*
+- For counts data ( expression counts and kraken2 counts ), see default method (edger-glmlrt) in bin/differential_expression.R
+- For analysis of ratio based data (psi, PDUI and editing level), see bin/ranksum.py
 

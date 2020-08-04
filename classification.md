@@ -31,7 +31,7 @@ python bin/test-classification.py  --input ${input} --pos CRC --neg NC --selecto
 # see bin/run-OvR5.sh
 
 # Combine selected features by mixing features and logistic regression
-# see bin/get-probability.sh* and *bin/probability-integration.py
+# see bin/get-probability.sh and bin/probability-integration.py
 ```
 
 ## Multiclass classification

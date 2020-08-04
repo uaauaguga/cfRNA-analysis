@@ -14,7 +14,7 @@ cutadapt AAAAAAAAAAA GGGGG -m 16 --trim-n -q 30 \
 - Priority of sequential alignment
 - spikein, univec, rRNA, lncRNA, miRNA, mRNA, piRNA, snoRNA, snRNA, srpRNA, tRNA, tucpRNA, Y RNA, circRNA, genome
 ```bash
-## Sequential alignment, see snakefiles/sequential_mapping.snakemake 
+## See snakefiles/sequential_mapping.snakemake for details in sequential alignment
 pigz -d -c {inputFastq} \
         | bowtie2 -f -p 1 --norc --sensitive --no-unal \
             --un-gz {unmappedFastq} -x {sequenceIndex} - -S - \
@@ -28,7 +28,7 @@ pigz -d -c {inputFastq} \
 ## Count reads aligned to miRNA
 bin/count_reads.py count_mature_mirna -i {miRNABam} -a {annotation}  -o {output}
 
-## Count non miRNA reads aligned to other transcripts
+## Count reads aligned to other transcripts
 bin/count_reads.py count_transcript -i {transcriptBam} -s {strandness}  -o {output}
 
 ```
