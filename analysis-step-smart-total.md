@@ -16,8 +16,8 @@ python bin/trimGC.py -s {strandness} -o {output_preffix} -i {input_preffix} > {l
 
 ## 2.1 Reads alignment
 - Sequentially align reads to spikeIn,UniVec,rRNA,hg38,and circRNA using the following command
-  - For spikeIn,UniVec,rRNA,and circRNA alignment, set seedPerWindowNmax=20
-  - For hg38 alignment, set seedPerWindowNmax=50
+  - For spikeIn,UniVec,rRNA,and circRNA alignment, set seedPerWindowNmax to 20
+  - For hg38 alignment, set seedPerWindowNmax to 50
 ```bash
 STAR --genomeDir {sequenceIndex} \
             --readFilesIn {input.reads1} {input.reads2} \
@@ -30,7 +30,7 @@ STAR --genomeDir {sequenceIndex} \
             --seedPerWindowNmax {seedPerWindowNmax}
 ```
 
-## 2.2 Remove duplication for circRNA.bam and genome.bam with picard tools
+## 2.2 Remove duplication in circRNA.bam and genome.bam with picard tools
 ```bash
 java -jar {picardDir}/picard.jar \
             MarkDuplicates REMOVE_DUPLICATES=true \
@@ -55,12 +55,12 @@ bash bin/getIntron-spanning.sh {inbam} {outbam} > {log} 2>&1
 bash bin/sequential.assign.long.sh {bam} {outdir} {beddir}
 ```
 
-## 3.2 Quantify gene expression and circRNA
+## 3.2 Quantify gene and circRNA expression
 ```bash
 # Quantify gene expression
 # For forward stranded libraries,strandness=1, for reverse stranded libraries, strandness=2 
 featureCounts -O -t exon -g gene_id -M -s {strandness} -p -a {gtf} -o {counts} {bam} > {log}
-# Quantify circRNA 
+# Quantify circRNA expression
 # Strandness: forward, reverse
 bin/count_reads.py count_circrna -s {strandness} --paired-end -i {inbam} -o {output}
 ```
@@ -129,7 +129,6 @@ kraken2 --db {kraken2db}  --unclassified-out {outprefix}  --report {report} --pa
 python bin/summarize-kraken.py -i {report} -l {taxoLevel} -o {output}
 
 ```
-
 ## 5.1 Filtering: 
 - See bin/filter.py
 
